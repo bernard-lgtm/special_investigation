@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Don't reelect these mayors in 2026 — Daily Maverick</title>
+
+  <!-- Fonts — matching BaseLayout.astro exactly -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* DMCustom — self-hosted, copied from public/fonts/dmcustom/ */
+    @font-face {
+      font-family: 'DMCustom';
+      src: url('DMCustom.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+
+  <style>
+    /* ── Reset ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── DM design tokens — from global.css ──────────────── */
+    :root {
+      --dm-red:       #BC1717;
+      --dm-darkred:   #A61212;
+      --dm-black-1:   #111111;
+      --dm-black-2:   #292929;
+      --dm-black-3:   #171717;
+      --dm-gray-1:    #f9f9f9;
+      --dm-gray-2:    #e6e6e6;
+      --dm-gray-4:    #666;
+      --dm-light:     #eceff3;
+      --dm-light-2:   #ced2da;
+      --white:        #ffffff;
+
+      /* Font stack — matches global.css --font-* variables */
+      --font-heading:  'Geist', serif;
+      --font-body:     'Charis SIL', Georgia, serif;
+      --font-geist:    'Geist', serif;
+      --font-dmcustom: 'DMCustom', Georgia, serif;
+
+      --layout-max-width: 760px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--dm-black-1);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Sticky nav strip ────────────────────────────────── */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px 0 20px;
+      height: 72px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.26);
+    }
+    .site-nav__logo {
+      height: 50px;
+      width: auto;
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .site-nav__logo--masthead { height: 40px; }
+    }
+    .site-nav__label {
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+    }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 92svh;
+      min-height: 460px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('Hero%20Image.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    .hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.5) 70%, transparent 100%);
+    }
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      padding: 0 24px 64px;
+      max-width: var(--layout-max-width);
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero__series {
+      display: block;
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55); /* label on dark hero bg — matches dm-light-2 on dark */
+      margin-bottom: 16px;
+    }
+    .hero__headline {
+      font-family: var(--font-dmcustom);
+      font-weight: 700;
+      font-size: clamp(36px, 5.5vw, 68px);
+      line-height: 0.95;
+      color: var(--white);
+      max-width: 780px;
+      margin-bottom: 20px;
+    }
+    .hero__blurb {
+      font-family: var(--font-body);
+      font-size: clamp(17px, 1.8vw, 20px);
+      line-height: 1.35;
+      color: rgba(255,255,255,0.75);
+      max-width: 520px;
+    }
+
+    /* ── Essay ───────────────────────────────────────────── */
+    .essay {
+      background: #121212;
+      padding: 48px 24px 80px;
+    }
+    .essay__inner {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .essay__label {
+      display: block;
+      font-family: var(--font-geist);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dm-light-2); /* section label on dark bg — lighter grey */
+      margin-bottom: 32px;
+    }
+    .essay h2 {
+      font-family: var(--font-dmcustom);
+      font-size: clamp(26px, 3vw, 36px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--dm-light);
+      margin-bottom: 28px;
+    }
+    .essay p {
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--dm-light-2);
+      margin-bottom: 24px;
+    }
+
+    /* Pull quote */
+    .pull-quote {
+      padding: 0 72px;
+      margin: 48px 0;
+      text-align: center;
+    }
+    .pull-quote p {
+      font-family: var(--font-dmcustom);
+      font-weight: 700;
+      font-size: clamp(20px, 2.2vw, 26px);
+      font-style: normal;
+      line-height: 1.25;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+    .pull-quote cite {
+      font-family: var(--font-geist);
+      font-size: 14px;
+      font-weight: 400;
+      font-style: normal;
+      color: rgba(255,255,255,0.75);
+      display: block;
+      text-align: center;
+    }
+
+    /* ── Municipality sections ───────────────────────────── */
+    .municipality {
+      padding: 72px 24px;
+      border-top: 4px solid var(--dm-black-1);
+    }
+    .municipality:nth-child(even) {
+      background: var(--dm-gray-1);
+    }
+    .municipality__inner {
+      max-width: var(--layout-max-width);
+      margin: 0 auto;
+    }
+
+    .municipality__header {
+      margin-bottom: 48px;
+    }
+    .municipality__location {
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dm-black-2);
+      margin-bottom: 10px;
+      display: block;
+    }
+    .municipality__name {
+      font-family: var(--font-dmcustom);
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 0.95;
+      color: var(--dm-black-1);
+      margin-bottom: 16px;
+    }
+    .municipality__intro {
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.4;
+      color: var(--dm-black-1);
+      max-width: 660px;
+    }
+
+    /* ── Story cards ─────────────────────────────────────── */
+    .stories { display: flex; flex-direction: column; gap: 0; }
+
+    .story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      padding: 40px 0;
+      border-top: 1px solid var(--dm-gray-2);
+    }
+    .story:first-child { border-top: none; padding-top: 0; }
+    .story--flip .story__image-col { order: -1; }
+
+    .story__category {
+      display: block;
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dm-black-2);
+      margin-bottom: 18px;
+    }
+    .story__headline {
+      font-family: var(--font-dmcustom);
+      font-weight: 700;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.1;
+      color: var(--dm-black-1);
+      margin-bottom: 12px;
+    }
+    .story__headline a {
+      color: inherit;
+      text-decoration: none;
+      display: inline-block;
+      transform-origin: center;
+      transition: transform 0.05s ease-in, filter 0.05s ease-in;
+      filter: drop-shadow(0 0 0px rgba(0,0,0,0));
+      will-change: transform, filter;
+    }
+    .story--active .story__headline a,
+    .story--headline-active .story__headline a {
+      transform: scale(1.013);
+      filter: drop-shadow(0 1px 0px rgba(0,0,0,0.07));
+    }
+
+    .story__body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.4;
+      color: var(--dm-black-1);
+      margin-bottom: 16px;
+    }
+    .story__link {
+      font-family: var(--font-geist);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dm-black-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .story__link:hover { color: var(--dm-black-1); }
+
+    .story__image-placeholder {
+      width: 100%;
+      aspect-ratio: 3/2;
+      background: var(--dm-gray-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-geist);
+      font-size: 11px;
+      color: var(--dm-gray-4);
+    }
+    .story__image-col {
+      overflow: hidden;
+    }
+    .story__image {
+      width: 100%;
+      aspect-ratio: 3/2;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.1s cubic-bezier(0.9, 0, 1, 1);
+      transform-origin: center;
+      will-change: transform;
+    }
+    .story--active .story__image {
+      transform: scale(1.04);
+    }
+    .story__image-col a {
+      display: block;
+      overflow: hidden;
+    }
+    .story__caption {
+      font-family: var(--font-body);
+      font-size: 0.7em;
+      padding: 0.9em 0;
+      display: block;
+      color: var(--dm-black-1);
+    }
+
+    /* ── Membership CTA ──────────────────────────────────── */
+    .membership-cta {
+      background: #0a0a0a;
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .membership-cta__inner { max-width: 520px; margin: 0 auto; }
+    .membership-cta h2 {
+      font-family: var(--font-dmcustom);
+      font-weight: 700;
+      font-size: clamp(22px, 2.5vw, 32px);
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 28px;
+    }
+    .membership-cta p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.35;
+      color: var(--dm-light-2);
+      margin-bottom: 28px;
+    }
+    /* btn-dm-priority from buttons.css */
+    .btn-dm-priority {
+      display: inline-block;
+      background: #CA2828;
+      color: var(--white);
+      text-align: center;
+      padding: 8px 16px;
+      font-family: var(--font-geist);
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid var(--dm-darkred);
+      border-radius: 4px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-dm-priority:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      cursor: pointer;
+    }
+
+    /* ── Municipality jump nav ──────────────────────────────── */
+    .municipality-nav {
+      background: var(--dm-black-1);
+      padding: 0 24px;
+      position: sticky;
+      top: 72px;
+      z-index: 50;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .municipality-nav__inner {
+      max-width: var(--layout-max-width);
+      margin: 0 auto;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .municipality-nav__inner::-webkit-scrollbar { display: none; }
+    .municipality-nav__btn {
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      padding: 14px 16px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .municipality-nav__btn:hover,
+    .municipality-nav__btn.is-active {
+      color: var(--white);
+      border-bottom-color: var(--dm-red);
+    }
+
+    /* ── Municipality back button ────────────────────────────── */
+    .municipality__header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .municipality__header-top .municipality__location { margin-bottom: 0; }
+    .municipality__back {
+      font-family: var(--font-geist);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--dm-gray-4);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s;
+    }
+    .municipality__back:hover { color: var(--dm-black-1); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero__content { padding-bottom: 48px; }
+      .story {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .story--flip .story__image-col { order: 0; }
+      .essay { padding: 56px 20px; }
+      .municipality { padding: 48px 20px; }
+      .municipality__name { font-size: 36px; }
+      .story__headline { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ──────────────────────────────────────────────── -->
+  <nav class="site-nav">
+    <a href="#">
+      <img src="DailyMaverick_White_(VECTOR).svg" class="site-nav__logo site-nav__logo--masthead" alt="Daily Maverick" />
+    </a>
+    <img src="Election%20Logo%20TOP%20RiGHT%20-%20Small.png" alt="Local Government Elections 2026" style="height:72px; width:auto; display:block; margin-right:-24px;" />
+  </nav>
+
+
+  <!-- ── Hero ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <span class="hero__series">Investigation · Municipalities 2026</span>
+      <h1 class="hero__headline">Don't reelect these mayors in 2026</h1>
+      <p class="hero__blurb">Daily Maverick toured some of South Africa's worst municipalities. Here's what we found.</p>
+    </div>
+  </section>
+
+
+  <!-- ── Essay ─────────────────────────────────────────────── -->
+  <section class="essay">
+    <div class="essay__inner">
+      <span class="essay__label">The investigation</span>
+
+      <h2>How we reported this story — and what we discovered</h2>
+
+      <p>Over six months, Daily Maverick journalists visited [X] municipalities across South Africa, combing through audit reports, interviewing residents, attending council meetings, and requesting access to infrastructure that officials would rather hide.</p>
+
+      <p>We chose our locations deliberately. Each municipality profiled here sits in the bottom quartile of the Auditor-General's outcomes, carries irregular expenditure running into hundreds of millions of rands, and faces local government elections in 2026.</p>
+
+      <blockquote class="pull-quote">
+        <p>&ldquo;The pipes are broken, the roads are broken, and the promises are broken. But every five years they come back to<br>ask for your vote.&rdquo;</p>
+        <cite><strong>Resident</strong>, Sundays River Valley, EC</cite>
+      </blockquote>
+
+      <p>Our methodology: reporters requested financial statements and audit outcomes under PAIA; verified service-delivery complaints against municipal records; and photographed conditions on the ground. All figures use the most recent audited data. Where officials were asked for comment, their responses are included in full.</p>
+
+      <p>What follows is a municipality-by-municipality account. Read it before you vote.</p>
+    </div>
+  </section>
+
+
+  <!-- ── Municipality jump nav ────────────────────────────── -->
+  <nav class="municipality-nav" id="municipality-nav">
+    <div class="municipality-nav__inner">
+      <a href="#municipality-1" class="municipality-nav__btn">Sundays River Valley</a>
+      <a href="#municipality-2" class="municipality-nav__btn">[Second Municipality]</a>
+      <a href="#municipality-3" class="municipality-nav__btn">[Third Municipality]</a>
+      <a href="#municipality-4" class="municipality-nav__btn">[Fourth Municipality]</a>
+      <a href="#municipality-5" class="municipality-nav__btn">[Fifth Municipality]</a>
+    </div>
+  </nav>
+
+  <!-- ── Municipalities ────────────────────────────────────── -->
+
+  <div class="municipality" id="municipality-1">
+    <div class="municipality__inner">
+      <header class="municipality__header">
+        <span class="municipality__location">Eastern Cape</span>
+        <h2 class="municipality__name">Sundays River Valley</h2>
+        <p class="municipality__intro">A former citrus-farming hub now drowning in sewage spills, R400-million in irregular expenditure, and a mayor who hasn't chaired a council meeting in eight months.</p>
+      </header>
+
+      <div class="stories">
+
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Infrastructure</span>
+            <h3 class="story__headline"><a href="#">The sewage plant that stopped working — and the officials who pretended it hadn't</a></h3>
+            <p class="story__body">Residents of Kirkwood have been living with raw sewage flowing into the Sundays River for three years. Internal municipal records, obtained under PAIA, show engineers flagged the failure eighteen months before any public acknowledgement.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%201.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text here. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+
+        <article class="story story--flip">
+          <div class="story__text-col">
+            <span class="story__category">Finances</span>
+            <h3 class="story__headline"><a href="#">R400-million and nothing to show for it: inside the municipality's irregular expenditure</a></h3>
+            <p class="story__body">The Auditor-General's latest report flags irregular expenditure of R412-million — more than the municipality's entire annual budget. We tracked where the money went, and who approved it.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%202.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text here. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Accountability</span>
+            <h3 class="story__headline"><a href="#">The mayor who stopped showing up</a></h3>
+            <p class="story__body">Mayor [Name] has not chaired a council meeting in eight months. We asked the municipality to explain. Their response — and what it reveals about oversight — is the real story.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%203.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text here. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div><!-- /Sundays River Valley -->
+
+
+  <div class="municipality" id="municipality-2">
+    <div class="municipality__inner">
+      <header class="municipality__header">
+        <div class="municipality__header-top">
+          <span class="municipality__location">Limpopo</span>
+          <a href="#municipality-nav" class="municipality__back">↑ Back to top</a>
+        </div>
+        <h2 class="municipality__name">[Second Municipality]</h2>
+        <p class="municipality__intro">A short introduction to this municipality — what makes it significant to this investigation and why voters should take note.</p>
+      </header>
+
+      <div class="stories">
+
+        <article class="story story--flip">
+          <div class="story__text-col">
+            <span class="story__category">Water &amp; Sanitation</span>
+            <h3 class="story__headline"><a href="#">[Story headline goes here]</a></h3>
+            <p class="story__body">A paragraph summarising this story — what the journalist found and what it means for residents. Two to three sentences, with the full detail on the article page.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%201.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Governance</span>
+            <h3 class="story__headline"><a href="#">[Second story headline]</a></h3>
+            <p class="story__body">Summary of the second story for this municipality. Keep it punchy — readers want enough to know if it's worth clicking.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%202.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div><!-- /Municipality 2 -->
+
+  <div class="municipality" id="municipality-3">
+    <div class="municipality__inner">
+      <header class="municipality__header">
+        <div class="municipality__header-top">
+          <span class="municipality__location">KwaZulu-Natal</span>
+          <a href="#municipality-nav" class="municipality__back">↑ Back to top</a>
+        </div>
+        <h2 class="municipality__name">[Third Municipality]</h2>
+        <p class="municipality__intro">A short introduction to this municipality — what makes it significant to this investigation and why voters should take note.</p>
+      </header>
+      <div class="stories">
+        <article class="story story--flip">
+          <div class="story__text-col">
+            <span class="story__category">Infrastructure</span>
+            <h3 class="story__headline"><a href="#">[Story headline goes here]</a></h3>
+            <p class="story__body">A paragraph summarising this story — what the journalist found and what it means for residents. Two to three sentences, with the full detail on the article page.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%201.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Finances</span>
+            <h3 class="story__headline"><a href="#">[Second story headline]</a></h3>
+            <p class="story__body">Summary of the second story for this municipality. Keep it punchy — readers want enough to know if it's worth clicking.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%202.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div><!-- /Municipality 3 -->
+
+  <div class="municipality" id="municipality-4">
+    <div class="municipality__inner">
+      <header class="municipality__header">
+        <div class="municipality__header-top">
+          <span class="municipality__location">North West</span>
+          <a href="#municipality-nav" class="municipality__back">↑ Back to top</a>
+        </div>
+        <h2 class="municipality__name">[Fourth Municipality]</h2>
+        <p class="municipality__intro">A short introduction to this municipality — what makes it significant to this investigation and why voters should take note.</p>
+      </header>
+      <div class="stories">
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Water &amp; Sanitation</span>
+            <h3 class="story__headline"><a href="#">[Story headline goes here]</a></h3>
+            <p class="story__body">A paragraph summarising this story — what the journalist found and what it means for residents. Two to three sentences, with the full detail on the article page.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%203.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+        <article class="story story--flip">
+          <div class="story__text-col">
+            <span class="story__category">Accountability</span>
+            <h3 class="story__headline"><a href="#">[Second story headline]</a></h3>
+            <p class="story__body">Summary of the second story for this municipality. Keep it punchy — readers want enough to know if it's worth clicking.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%201.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div><!-- /Municipality 4 -->
+
+  <div class="municipality" id="municipality-5">
+    <div class="municipality__inner">
+      <header class="municipality__header">
+        <div class="municipality__header-top">
+          <span class="municipality__location">Mpumalanga</span>
+          <a href="#municipality-nav" class="municipality__back">↑ Back to top</a>
+        </div>
+        <h2 class="municipality__name">[Fifth Municipality]</h2>
+        <p class="municipality__intro">A short introduction to this municipality — what makes it significant to this investigation and why voters should take note.</p>
+      </header>
+      <div class="stories">
+        <article class="story story--flip">
+          <div class="story__text-col">
+            <span class="story__category">Governance</span>
+            <h3 class="story__headline"><a href="#">[Story headline goes here]</a></h3>
+            <p class="story__body">A paragraph summarising this story — what the journalist found and what it means for residents. Two to three sentences, with the full detail on the article page.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%202.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+        <article class="story">
+          <div class="story__text-col">
+            <span class="story__category">Infrastructure</span>
+            <h3 class="story__headline"><a href="#">[Second story headline]</a></h3>
+            <p class="story__body">Summary of the second story for this municipality. Keep it punchy — readers want enough to know if it's worth clicking.</p>
+            <a href="#" class="story__link">Read the full story →</a>
+          </div>
+          <div class="story__image-col">
+            <a href="#"><img class="story__image" src="Story%203.jpg" alt="Story photo" /></a>
+            <em class="story__caption">Caption text. Photo: [Photographer] / Daily Maverick</em>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div><!-- /Municipality 5 -->
+
+
+  <!-- ── Election logo ─────────────────────────────────────── -->
+  <div style="background: #ffffff; border-top: 1px solid #d8d8d8; padding: 48px 24px 48px; text-align: center;">
+    <p style="font-family: var(--font-geist); font-size: 14px; font-weight: 400; color: var(--dm-black-2); margin-bottom: 20px;">For more <strong>elections coverage</strong>, visit our hub.</p>
+    <img src="Election%20Logo%20-%20Variation3.png" alt="Local Government Elections 2026" style="max-width: 520px; width: 100%; display: inline-block;" />
+  </div>
+
+  <!-- ── Membership CTA ─────────────────────────────────────── -->
+  <section class="membership-cta">
+    <div class="membership-cta__inner">
+      <h2>Investigations like this take time.<br>Your support makes them possible.</h2>
+      <p>Daily Maverick is independent.<br>Readers' support keeps it that way.</p>
+      <a href="#" class="btn-dm-priority">Become a Maverick Insider</a>
+    </div>
+  </section>
+
+  <script>
+    const navBtns = document.querySelectorAll('.municipality-nav__btn');
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(btn.getAttribute('href'));
+        if (!target) return;
+        const siteNav    = document.querySelector('.site-nav');
+        const munNav     = document.querySelector('.municipality-nav');
+        const offset     = (siteNav ? siteNav.offsetHeight : 0) + (munNav ? munNav.offsetHeight : 0);
+        window.scrollTo({ top: target.offsetTop - offset + 6, behavior: 'smooth' });
+      });
+    });
+    const municipalities = document.querySelectorAll('.municipality[id]');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navBtns.forEach(btn => btn.classList.remove('is-active'));
+          const active = document.querySelector(`.municipality-nav__btn[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -60% 0px' });
+    municipalities.forEach(m => observer.observe(m));
+
+    document.querySelectorAll('.story').forEach(story => {
+      const triggers = [story.querySelector('.story__headline'), story.querySelector('.story__image-col')];
+      triggers.forEach(el => {
+        if (!el) return;
+        el.addEventListener('mouseenter', () => story.classList.add('story--active'));
+        el.addEventListener('mouseleave', () => story.classList.remove('story--active'));
+      });
+
+      const link = story.querySelector('.story__link');
+      if (link) {
+        link.addEventListener('mouseenter', () => story.classList.add('story--headline-active'));
+        link.addEventListener('mouseleave', () => story.classList.remove('story--headline-active'));
+      }
+    });
+  </script>
+
+</body>
+</html>
