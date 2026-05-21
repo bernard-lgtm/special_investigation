@@ -148,7 +148,7 @@
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.55); /* label on dark hero bg — matches dm-light-2 on dark */
+      color: rgba(255,255,255,0.55);
       margin-bottom: 16px;
     }
     .hero__headline {
@@ -184,7 +184,7 @@
       font-size: 14px;
       font-weight: 700;
       text-transform: uppercase;
-      color: var(--dm-light-2); /* section label on dark bg — lighter grey */
+      color: var(--dm-light-2);
       margin-bottom: 32px;
     }
     .essay h2 {
@@ -404,7 +404,6 @@
       color: var(--dm-light-2);
       margin-bottom: 28px;
     }
-    /* btn-dm-priority from buttons.css */
     .btn-dm-priority {
       display: inline-block;
       background: #CA2828;
@@ -457,10 +456,18 @@
       padding: 10px 8px 13px;
       text-align: center;
       line-height: 1.1;
-      transition: color 0.15s, font-weight 0.15s;
+      transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  font-weight 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
     }
     .municipality-nav__btn:hover {
+      color: rgba(255,255,255,0.85);
       font-weight: 700;
+    }
+    .municipality-nav__btn:active {
+      opacity: 0.55;
     }
     .municipality-nav__btn.is-active {
       color: var(--white);
@@ -522,6 +529,9 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
         scroll-behavior: smooth;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
       }
       .municipality-nav__inner::-webkit-scrollbar { display: none; }
       .municipality-nav__btn {
@@ -533,25 +543,39 @@
         line-height: 1.15;
         white-space: normal;
         word-break: normal;
+        scroll-snap-align: center;
       }
       .municipality-nav__chevron {
         display: flex;
         position: absolute;
-        right: 0;
         top: 0;
         bottom: 0;
         width: 44px;
         align-items: center;
+        color: rgba(255,255,255,0.85);
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        z-index: 2;
+      }
+      .municipality-nav__chevron--right {
+        right: 0;
         justify-content: flex-end;
         padding-right: 10px;
         background: linear-gradient(to right, rgba(17,17,17,0) 0%, var(--dm-black-1) 55%);
-        color: rgba(255,255,255,0.85);
-        pointer-events: none;
-        transition: opacity 0.2s ease;
         opacity: 1;
       }
-      .municipality-nav.is-end .municipality-nav__chevron {
+      .municipality-nav__chevron--left {
+        left: 0;
+        justify-content: flex-start;
+        padding-left: 10px;
+        background: linear-gradient(to left, rgba(17,17,17,0) 0%, var(--dm-black-1) 55%);
         opacity: 0;
+      }
+      .municipality-nav.is-end .municipality-nav__chevron--right {
+        opacity: 0;
+      }
+      .municipality-nav:not(.is-start) .municipality-nav__chevron--left {
+        opacity: 1;
       }
     }
   </style>
@@ -614,7 +638,10 @@
       <a href="#municipality-4" class="municipality-nav__btn">Madibeng</a>
       <a href="#municipality-5" class="municipality-nav__btn">Chief Albert Luthuli</a>
     </div>
-    <div class="municipality-nav__chevron" aria-hidden="true">
+    <div class="municipality-nav__chevron municipality-nav__chevron--left" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="municipality-nav__chevron municipality-nav__chevron--right" aria-hidden="true">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </div>
   </nav>
@@ -840,41 +867,73 @@
   </section>
 
   <script>
-    const navBtns = document.querySelectorAll('.municipality-nav__btn');
+    const navBtns   = document.querySelectorAll('.municipality-nav__btn');
+    const munNavEl  = document.querySelector('.municipality-nav');
+    const munInner  = document.querySelector('.municipality-nav__inner');
+
+    // Scroll the horizontal menu so the given button is centered (mobile only)
+    function centerMenuOn(btn) {
+      if (!munInner || !btn) return;
+      const max = munInner.scrollWidth - munInner.clientWidth;
+      if (max <= 1) return; // nothing to scroll
+      const target = btn.offsetLeft + btn.offsetWidth / 2 - munInner.clientWidth / 2;
+      const clamped = Math.max(0, Math.min(max, target));
+      munInner.scrollTo({ left: clamped, behavior: 'smooth' });
+    }
+
+    // Suppress observer-driven active state while a click-triggered smooth scroll is in flight
+    let lockActiveUntil = 0;
+    let lockResetTimer  = null;
+
+    function setActive(btn) {
+      navBtns.forEach(b => b.classList.remove('is-active'));
+      if (btn) btn.classList.add('is-active');
+    }
+
     navBtns.forEach(btn => {
       btn.addEventListener('click', e => {
         e.preventDefault();
         const target = document.querySelector(btn.getAttribute('href'));
         if (!target) return;
-        const siteNav    = document.querySelector('.site-nav');
-        const munNav     = document.querySelector('.municipality-nav');
-        const offset     = (siteNav ? siteNav.offsetHeight : 0) + (munNav ? munNav.offsetHeight : 0);
+        const siteNav = document.querySelector('.site-nav');
+        const munNav  = document.querySelector('.municipality-nav');
+        const offset  = (siteNav ? siteNav.offsetHeight : 0) + (munNav ? munNav.offsetHeight : 0);
+
+        // 1. Immediately mark this button as active so the user sees the change on tap
+        setActive(btn);
+        centerMenuOn(btn);
+
+        // 2. Lock out the observer for ~1s so intermediate sections don't steal the active state
+        lockActiveUntil = Date.now() + 1200;
+        if (lockResetTimer) clearTimeout(lockResetTimer);
+        lockResetTimer = setTimeout(() => { lockActiveUntil = 0; }, 1300);
+
         window.scrollTo({ top: target.offsetTop - offset + 6, behavior: 'smooth' });
       });
     });
+
     const municipalities = document.querySelectorAll('.municipality[id]');
     const observer = new IntersectionObserver(entries => {
+      if (Date.now() < lockActiveUntil) return;
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          navBtns.forEach(btn => btn.classList.remove('is-active'));
           const active = document.querySelector(`.municipality-nav__btn[href="#${entry.target.id}"]`);
-          if (active) active.classList.add('is-active');
+          if (active) {
+            setActive(active);
+            centerMenuOn(active);
+          }
         }
       });
     }, { rootMargin: '-20% 0px -60% 0px' });
     municipalities.forEach(m => observer.observe(m));
 
-    // Chevron indicator for horizontally-scrollable municipality nav on mobile
-    const munNavEl   = document.querySelector('.municipality-nav');
-    const munInner   = document.querySelector('.municipality-nav__inner');
+    // Chevron indicators for horizontally-scrollable municipality nav on mobile
     function updateMunChevron() {
       if (!munNavEl || !munInner) return;
       const max = munInner.scrollWidth - munInner.clientWidth;
-      if (max <= 1 || munInner.scrollLeft >= max - 2) {
-        munNavEl.classList.add('is-end');
-      } else {
-        munNavEl.classList.remove('is-end');
-      }
+      const sl  = munInner.scrollLeft;
+      munNavEl.classList.toggle('is-end',   max <= 1 || sl >= max - 2);
+      munNavEl.classList.toggle('is-start', sl <= 1);
     }
     if (munInner) {
       munInner.addEventListener('scroll', updateMunChevron, { passive: true });
